@@ -36,10 +36,12 @@
 }
 
 - (void) setRow: (NSNumber *) row andColumn: (NSNumber *) column toValue: (NSNumber *) value {
-    
     NSMutableArray * rowArray = [self.elts objectAtIndex:[row intValue]];
     [rowArray setObject:value atIndexedSubscript:[column intValue]];
-    
+}
+- (NSNumber *) getRow: (NSNumber *) row andColumn: (NSNumber *) column {
+    NSMutableArray * rowArray = [self.elts objectAtIndex:[row intValue]];
+    return [rowArray objectAtIndex:[column intValue]];
 }
 
 
@@ -50,44 +52,38 @@
     return currentState;
     
 }
-/*
-+ (instancetype) matrixAddA: (Board *) a B: (Board *) b XSkew: (int) xSkew ySkew: (int) ySkew {
+
++ (instancetype) matrixAdd: (Board *) a With: (Board *) b AndXSkew: (NSNumber *) xSkew AndYSkew: (NSNumber *) ySkew {
+    // Add Matrix A + B, skewing B's values right by XSkew, and up by YSkew.
     
-    int y_count = (int) [a count];
-    int x_count = (int) [[a objectAtIndex:0] count];
-    
-    
-    
-    NSMutableArray * result = [[NSMutableArray alloc] initWithCapacity:y_count];
+    Board * result = [[Board alloc] initWithHeight:a.height andWidth:a.width];
+    int y_count = [a.height intValue];
+    int x_count = [a.width intValue];
     
     for (int i = 0; i < y_count; i++) {
-        NSMutableArray * row = [[NSMutableArray alloc] initWithCapacity:x_count];
         for (int j = 0; j < x_count; j++) {
             
-            [row insertObject:[NSNumber @0] atIndex:j];
-            
-            int other_i = i + ySkew;
-            int other_j = j + xSkew;
+            int other_i = i + [ySkew intValue];
+            int other_j = j + [xSkew intValue];
             
             if (other_i < 0 || other_i >= y_count || other_j < 0 || other_j >= x_count) {
                 continue;
             } else {
                 
-                NSNumber * a_val = [[a objectAtIndex:i] objectAtIndex:j];
-                NSNumber * b_val = [[a objectAtIndex:other_i] objectAtIndex:other_j];
-                NSNumber * sum = @([a_val intValue] + [b_val intValue]);
-                
-                [[result objectAtIndex:i] setObject:sum atIndex:j];
+                int a_val = [[a getRow:[NSNumber numberWithInt:i]
+                            andColumn:[NSNumber numberWithInt:j]] intValue];
+                int b_val = [[a getRow:[NSNumber numberWithInt:other_i]
+                            andColumn:[NSNumber numberWithInt:other_j]] intValue];
+                NSNumber * sum = @(a_val + b_val);
+                NSLog([NSString stringWithFormat:@"Setting @% and @% to @%", i, j, sum, nil]);
+                [result setRow: [NSNumber numberWithInt:i] andColumn:[NSNumber numberWithInt:j] toValue:sum];
             }
-            
-            
         }
-        [result insertObject:row atIndex:i];
     }
     return result;
     
 }
-*/
+
 
 
 - (NSString *) description {
@@ -103,10 +99,6 @@
     return [acc description];
     
 }
-
-
-
-
 
 
 @end

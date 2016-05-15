@@ -18,11 +18,19 @@
 @property (strong, readonly, nonatomic) NSNumber * height;
 
 
+// Take a board and return an update according to Conway's game of life.
 + (instancetype) golStep: (Board *) currentState;
-// + (instancetype) matrixAddA: (Board *) a B: (Board *) b XSkew: (int) xSkew ySkew: (int) ySkew;
 
++ (instancetype) matrixAdd: (Board *) a With: (Board *) b AndXSkew: (NSNumber *) xSkew AndYSkew: (NSNumber *) ySkew;
+
+
+// Initialize
 - (instancetype) initWithHeight: (NSNumber *) height andWidth: (NSNumber *) width;
+
+// Get/Set by index
 - (void) setRow: (NSNumber *) row andColumn: (NSNumber *) column toValue: (NSNumber *) value;
+- (NSNumber *) getRow: (NSNumber *) row andColumn: (NSNumber *) column;
+
 
 
 @end
