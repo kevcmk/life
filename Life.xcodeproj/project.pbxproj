@@ -16,6 +16,7 @@
 		9F9F32F21CE78C0900C90504 /* LifeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9F32F11CE78C0900C90504 /* LifeTests.m */; };
 		9F9F32FD1CE78C0900C90504 /* LifeUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9F32FC1CE78C0900C90504 /* LifeUITests.m */; };
 		9F9F330B1CE78F3000C90504 /* Block.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9F330A1CE78F3000C90504 /* Block.m */; };
+		9F9F33101CE812D600C90504 /* Board.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9F330F1CE812D600C90504 /* Board.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +55,8 @@
 		9F9F32FE1CE78C0900C90504 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9F9F330A1CE78F3000C90504 /* Block.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Block.m; sourceTree = "<group>"; };
 		9F9F330E1CE78FA200C90504 /* Block.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Block.h; sourceTree = "<group>"; };
+		9F9F330F1CE812D600C90504 /* Board.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Board.m; sourceTree = "<group>"; };
+		9F9F33111CE8132000C90504 /* Board.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Board.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,12 +112,14 @@
 				9F9F32DD1CE78C0900C90504 /* ViewController.h */,
 				9F9F330A1CE78F3000C90504 /* Block.m */,
 				9F9F32DE1CE78C0900C90504 /* ViewController.m */,
+				9F9F330F1CE812D600C90504 /* Board.m */,
 				9F9F32E01CE78C0900C90504 /* Main.storyboard */,
 				9F9F32E31CE78C0900C90504 /* Assets.xcassets */,
 				9F9F32E51CE78C0900C90504 /* LaunchScreen.storyboard */,
 				9F9F32E81CE78C0900C90504 /* Info.plist */,
 				9F9F32D71CE78C0900C90504 /* Supporting Files */,
 				9F9F330E1CE78FA200C90504 /* Block.h */,
+				9F9F33111CE8132000C90504 /* Board.h */,
 			);
 			path = Life;
 			sourceTree = "<group>";
@@ -279,6 +284,7 @@
 				9F9F330B1CE78F3000C90504 /* Block.m in Sources */,
 				9F9F32DC1CE78C0900C90504 /* AppDelegate.m in Sources */,
 				9F9F32D91CE78C0900C90504 /* main.m in Sources */,
+				9F9F33101CE812D600C90504 /* Board.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
