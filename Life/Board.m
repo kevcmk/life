@@ -47,14 +47,31 @@
 
 + (instancetype) golStep: (Board *) currentState {
     
-    // Board * board = [[Board alloc] initWithHeight:[currentState height] andWidth: [currentState height]];
+    Board * board = [[Board alloc] initWithHeight:currentState.height andWidth:currentState.width];
+    Board * sums = [[Board alloc] initWithHeight:currentState.height andWidth:currentState.width];
     
+    sums = [Board matrixAdd:sums With:currentState AndXSkew:@-1 AndYSkew:@-1];
+    sums = [Board matrixAdd:sums With:currentState AndXSkew:@-1 AndYSkew:@0];
+    sums = [Board matrixAdd:sums With:currentState AndXSkew:@-1 AndYSkew:@1];
+    
+    sums = [Board matrixAdd:sums With:currentState AndXSkew:@0 AndYSkew:@-1];
+    sums = [Board matrixAdd:sums With:currentState AndXSkew:@0 AndYSkew:@1];
+    
+    sums = [Board matrixAdd:sums With:currentState AndXSkew:@1 AndYSkew:@-1];
+    sums = [Board matrixAdd:sums With:currentState AndXSkew:@1 AndYSkew:@0];
+    sums = [Board matrixAdd:sums With:currentState AndXSkew:@1 AndYSkew:@1];
+    
+    NSLog([sums description]);
     return currentState;
     
 }
 
 + (instancetype) matrixAdd: (Board *) a With: (Board *) b AndXSkew: (NSNumber *) xSkew AndYSkew: (NSNumber *) ySkew {
     // Add Matrix A + B, skewing B's values right by XSkew, and up by YSkew.
+    
+    
+    NSLog(@"Adding\n%@", [a description], nil);
+    NSLog(@"And\n%@\n", [b description]);
     
     Board * result = [[Board alloc] initWithHeight:a.height andWidth:a.width];
     int y_count = [a.height intValue];
@@ -72,14 +89,15 @@
                 
                 int a_val = [[a getRow:[NSNumber numberWithInt:i]
                             andColumn:[NSNumber numberWithInt:j]] intValue];
-                int b_val = [[a getRow:[NSNumber numberWithInt:other_i]
+                int b_val = [[b getRow:[NSNumber numberWithInt:other_i]
                             andColumn:[NSNumber numberWithInt:other_j]] intValue];
                 NSNumber * sum = @(a_val + b_val);
-                NSLog([NSString stringWithFormat:@"Setting @% and @% to @%", i, j, sum, nil]);
+                // NSLog([NSString stringWithFormat:@"Setting %@ and %@ to %@", [NSNumber numberWithInt:i], [NSNumber numberWithInt:j], sum, nil]);
                 [result setRow: [NSNumber numberWithInt:i] andColumn:[NSNumber numberWithInt:j] toValue:sum];
             }
         }
     }
+    NSLog(@"And\n%@\n", [b description]);
     return result;
     
 }

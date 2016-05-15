@@ -53,10 +53,8 @@
     }
     
     //NSLog([[Board matrixAdd:x With:x AndXSkew:@0 AndYSkew:@0] description]);
-    NSLog([[Board matrixAdd:x With:x AndXSkew:@1 AndYSkew:@0] description]);
+    //NSLog([[Board matrixAdd:x With:x AndXSkew:@0 AndYSkew:@1] description]);
     
-    
-
 }
 
 - (void) awakeFromNib {
