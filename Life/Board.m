@@ -61,8 +61,34 @@
     sums = [Board matrixAdd:sums With:currentState AndXSkew:@1 AndYSkew:@0];
     sums = [Board matrixAdd:sums With:currentState AndXSkew:@1 AndYSkew:@1];
     
-    NSLog([sums description]);
-    return currentState;
+    for (int i = 0; i < [currentState.height intValue]; i++) {
+        for (int j = 0; j < [currentState.width intValue]; j++) {
+            NSNumber * iNum = [NSNumber numberWithInt:i];
+            NSNumber * jNum = [NSNumber numberWithInt:j];
+            
+            
+            if ([[currentState getRow:iNum andColumn:jNum] isEqualToNumber:@0]) {
+                // Current State is inactive, grow if there are precisely 3 neighbors
+                
+                if ([[sums getRow:iNum andColumn:jNum] isEqualToNumber:@3]) {
+                    [board setRow:iNum andColumn:jNum toValue:@1];
+                }
+                
+            } else {
+                // Current State is active, grow if there are 2 or 3 neighbors
+                
+                if ([[sums getRow:iNum andColumn:jNum] isEqualToNumber:@2] ||
+                    [[sums getRow:iNum andColumn:jNum] isEqualToNumber:@3]) {
+                    [board setRow:iNum andColumn:jNum toValue:@1];
+                }
+                
+            }
+            
+        }
+    }
+    
+    
+    return board;
     
 }
 
@@ -70,13 +96,14 @@
     // Add Matrix A + B, skewing B's values right by XSkew, and up by YSkew.
     
     
-    NSLog(@"Adding\n%@", [a description], nil);
-    NSLog(@"And\n%@\n", [b description]);
+    //NSLog(@"Adding\n%@", [a description], nil);
+    // NSLog(@"And\n%@\n", [b description]);
     
     Board * result = [[Board alloc] initWithHeight:a.height andWidth:a.width];
     int y_count = [a.height intValue];
     int x_count = [a.width intValue];
     
+    // +1 is necessary to get right query for right-most and bottom-most squares
     for (int i = 0; i < y_count; i++) {
         for (int j = 0; j < x_count; j++) {
             
@@ -84,7 +111,10 @@
             int other_j = j + [xSkew intValue];
             
             if (other_i < 0 || other_i >= y_count || other_j < 0 || other_j >= x_count) {
-                continue;
+            
+                int a_val = [[a getRow:[NSNumber numberWithInt:i]
+                             andColumn:[NSNumber numberWithInt:j]] intValue];
+                [result setRow: [NSNumber numberWithInt:i] andColumn:[NSNumber numberWithInt:j] toValue:@(a_val)];
             } else {
                 
                 int a_val = [[a getRow:[NSNumber numberWithInt:i]
@@ -92,12 +122,11 @@
                 int b_val = [[b getRow:[NSNumber numberWithInt:other_i]
                             andColumn:[NSNumber numberWithInt:other_j]] intValue];
                 NSNumber * sum = @(a_val + b_val);
-                // NSLog([NSString stringWithFormat:@"Setting %@ and %@ to %@", [NSNumber numberWithInt:i], [NSNumber numberWithInt:j], sum, nil]);
                 [result setRow: [NSNumber numberWithInt:i] andColumn:[NSNumber numberWithInt:j] toValue:sum];
             }
         }
     }
-    NSLog(@"And\n%@\n", [b description]);
+ 
     return result;
     
 }

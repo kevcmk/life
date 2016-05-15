@@ -33,6 +33,7 @@
     
     //NSMutableArray * board = [[NSMutableArray alloc] initWithCapacity:y_count];
     
+    
     Board * x = [[Board alloc] initWithHeight:@9 andWidth:@9];
     
     [x setRow:@3 andColumn:@3 toValue:@1];
@@ -47,9 +48,11 @@
     [x setRow:@5 andColumn:@5 toValue:@1];
     
     
-    for (int i = 0; i < 3; i++) {
+    
+    NSLog(@"%@\n", [x description]);
+    for (int i = 0; i < 8; i++) {
         x = [Board golStep:x];
-        NSLog([x description]);
+        NSLog(@"%@\n", [x description]);
     }
     
     //NSLog([[Board matrixAdd:x With:x AndXSkew:@0 AndYSkew:@0] description]);
