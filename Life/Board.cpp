@@ -49,7 +49,7 @@ void Board::randomize(double density) {
 Board * Board::matrixAdd(Board &a, Board &b, int xSkew, int ySkew) {
     
     // TODO Ensure release!
-    Board::Board * result = new Board(a.width, a.height);
+    Board::Board * result = new Board(a.height, a.width);
     int y_count = a.height;
     int x_count = a.width;
     for (int i = 0; i < y_count; i++) {
@@ -73,6 +73,59 @@ Board * Board::matrixAdd(Board &a, Board &b, int xSkew, int ySkew) {
     
 }
 
+Board * Board::boardEvolve(Board & currentState) {
+    Board::Board * result = new Board::Board(currentState.height, currentState.width);
+    Board::Board * sums = new Board::Board(currentState.height, currentState.width);
+    
+    sums = Board::matrixAdd(*sums, currentState, -1, -1);
+    sums = Board::matrixAdd(*sums, currentState, -1, 0);
+    sums = Board::matrixAdd(*sums, currentState, -1, 1);
+    
+    sums = Board::matrixAdd(*sums, currentState, 0, -1);
+    sums = Board::matrixAdd(*sums, currentState, 0, 1);
+    
+    sums = Board::matrixAdd(*sums, currentState, 1, -1);
+    sums = Board::matrixAdd(*sums, currentState, 1, 0);
+    sums = Board::matrixAdd(*sums, currentState, 1, 1);
+    
+    
+    //sums = [Board matrixAdd:sums With:currentState AndXSkew:@-1 AndYSkew:@-1];
+    //    sums = [Board matrixAdd:sums With:currentState AndXSkew:@-1 AndYSkew:@0];
+    //    sums = [Board matrixAdd:sums With:currentState AndXSkew:@-1 AndYSkew:@1];
+    //
+    //    sums = [Board matrixAdd:sums With:currentState AndXSkew:@0 AndYSkew:@-1];
+    //    sums = [Board matrixAdd:sums With:currentState AndXSkew:@0 AndYSkew:@1];
+    //
+    //    sums = [Board matrixAdd:sums With:currentState AndXSkew:@1 AndYSkew:@-1];
+    //    sums = [Board matrixAdd:sums With:currentState AndXSkew:@1 AndYSkew:@0];
+    //    sums = [Board matrixAdd:sums With:currentState AndXSkew:@1 AndYSkew:@1];
+    //
+    //    for (int i = 0; i < [currentState.height intValue]; i++) {
+    //        for (int j = 0; j < [currentState.width intValue]; j++) {
+    //            NSNumber * iNum = [NSNumber numberWithInt:i];
+    //            NSNumber * jNum = [NSNumber numberWithInt:j];
+    //
+    //
+    //            if ([[currentState getRow:iNum andColumn:jNum] isEqualToNumber:@0]) {
+    //                // Current State is inactive, grow if there are precisely 3 neighbors
+    //
+    //                if ([[sums getRow:iNum andColumn:jNum] isEqualToNumber:@3]) {
+    //                    [board setRow:iNum andColumn:jNum toValue:@1];
+    //                }
+    //
+    //            } else {
+    //                // Current State is active, grow if there are 2 or 3 neighbors
+    //
+    //                if ([[sums getRow:iNum andColumn:jNum] isEqualToNumber:@2] ||
+    //                    [[sums getRow:iNum andColumn:jNum] isEqualToNumber:@3]) {
+    //                    [board setRow:iNum andColumn:jNum toValue:@1];
+    //                }
+    //                
+    //            }
+    //            
+    //        }
+
+}
 
 
 
