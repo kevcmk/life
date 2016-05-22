@@ -63,13 +63,14 @@
     };
     self.edge = gcd(self.view.frame.size.width, self.view.frame.size.height);
     NSLog(@"GCD of %f and %f is %f", self.view.frame.size.width, self.view.frame.size.height, self.edge, nil);
-//    if (self.edge < 8) {
-//        /* If GCD is too small, increase it and fall back to margins */
-//        self.edge = 8.0;
-//    } else if (self.edge >= 40 && (int) self.edge % 2 == 0) {
-//        self.edge = self.edge / 2.0;
-//    }
-    self.edge = 16.0;
+    if (self.edge < 8) {
+        /* If GCD is too small, increase it and fall back to margins */
+        self.edge = 8.0;
+    } else if (self.edge >= 40 && (int) self.edge % 2 == 0) {
+        /* GCD is too big, and it's even.  Cut it in half */
+        self.edge = self.edge / 2.0;
+    }
+    self.edge = 10.0;
     
     float w = self.view.frame.size.width;
     float h = self.view.frame.size.height;
@@ -99,23 +100,27 @@
         }
         
     }
+        
+    self.board = new Board::Board(self.h_views, self.w_views);
+    self.board->randomize(0.3);
+        
     
-    /* https://www.sitepoint.com/using-c-and-c-in-an-ios-app-with-objective-c/ */
-    
-    
+//
 //    Board::Board * board1 = new Board::Board(4,4);
-//    Board::cell c = { 1 };
-//    board1->setElement(1,1,c);
-//    board1->setElement(1,3,c);
+//    Board::Board * board2 = new Board::Board(4,4);
+//    board1->setElement(1,1,Board::makeCell(1));
+//    board1->setElement(1,3,Board::makeCell(1));
+//    board2->setElement(1,1,Board::makeCell(1));
+//    board2->setElement(1,3,Board::makeCell(1));
 //    
-//    Board::Board * board2 = Board::matrixAdd(*board1, *board1, 1, 1);
+//    Board::matrixAdd(*board1, *board2, 1, 0);
 //    
 //    for (int i = 0; i < 4; i++) {
-//        NSLog(@"%d %d %d %d", board2->getElement(i, 0).state, board2->getElement(i, 1).state, board2->getElement(i, 2).state, board2->getElement(i, 3).state, nil);
+//        NSLog(@"%d %d %d %d", board1->getElement(i, 0).state, board1->getElement(i, 1).state, board1->getElement(i, 2).state, board1->getElement(i, 3).state, nil);
 //    }
-    
-    
-    self.board = new Board::Board((int) self.h_views, (int) self.w_views);
+//    
+//    
+//    self.board = new Board::Board((int) self.h_views, (int) self.w_views);
 
 //    self.board->randomize(0.3);
 //    for (int i = 0; i < (int) self.h_views; i++) {
@@ -128,44 +133,39 @@
 }
 
 - (void) render: (Board *) board {
-//    
-//    // Set view colors according to board board (w,h) == Board (w_views, h_views)
-//    
-//    UIColor * yesColor = [UIColor blackColor];
-//    UIColor * noColor = [UIColor whiteColor];
-//    
-//    /* Initialize and store views */
-//    for (int i = 0; i < (int) self.h_views; i++) {
-//        // Top to Bottom
-//        
-//        for (int j = 0; j < (int) self.w_views; j++) {
-//    
-//            UIView * view = [self.view viewWithTag: (i * self.w_views + j)];
-//            if ([[self.board getRow: [NSNumber numberWithInt:i] andColumn:[NSNumber numberWithInt:j]] intValue] == 1) {
-//                [view setBackgroundColor:yesColor];
-//            } else {
-//                [view setBackgroundColor:noColor];
-//            }
-//        }
-//        
-//    }
-//
+    
+    // Set view colors according to board board (w,h) == Board (w_views, h_views)
+    
+    UIColor * yesColor = [UIColor blackColor];
+    UIColor * noColor = [UIColor whiteColor];
+    
+    /* Initialize and store views */
+    for (int i = 0; i < (int) self.h_views; i++) {
+        // Top to Bottom
+        
+        for (int j = 0; j < (int) self.w_views; j++) {
+    
+            UIView * view = [self.view viewWithTag: (i * self.w_views + j)];
+            if (self.board->getElement(i, j).state) {
+                [view setBackgroundColor:yesColor];
+            } else {
+                [view setBackgroundColor:noColor];
+            }
+        }
+        
+    }
+
 }
 
 - (void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
     [self initializeBoard];
-    
+    [self render: self.board];
     
 
-//
-//    self.board = [[Board alloc] initWithHeight: [NSNumber numberWithInt:(int) self.h_views] andWidth:[NSNumber numberWithInt: (int) self.w_views]];
-//    [self.board randomize:@0.3];
-//    [self render: self.board];
-//    
-//    self.halt = NO;
-//    [self update];
+    self.halt = NO;
+    [self update];
 
     
     
@@ -193,34 +193,32 @@
 }
 
 - (void) update {
-    NSLog(@"startEventLoop called!");
+    NSLog(@"Update called.");
+    /* Execute board updates on global queue */
+    self.queue = dispatch_queue_create("boardQueue", NULL);
     
+    if (self.queue) {
+        dispatch_async(self.queue, ^{
+            NSLog(@"[Async] Evolve called...");
+            Board::Board * oldBoard = self.board;
+            self.board = new Board::Board(*self.board);
+            delete oldBoard;
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                NSLog(@"[Async] Main loop fxn called, rendering.");
+                [self render:self.board];
+                if (!self.halt) {
+                    NSLog(@"Self.halt false, calling update\n");
+                    [self update];
+                }
+            });
+        });
+    }
     
-//    
-//    /* Execute board updates on global queue */
-//    self.queue = dispatch_queue_create("boardQueue", NULL);
-//    
-//    if (self.queue) {
-//        dispatch_async(self.queue, ^{
-//            NSLog(@"Async fxn called, evolving board...");
-//            self.board = [Board boardEvolveWithBoard: self.board];
-//            
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                NSLog(@"Main loop fxn called, rendering.");
-//                [self render:self.board];
-//                if (!self.halt) {
-//                    NSLog(@"Self.halt false, calling update\n");
-//                    [self update];
-//                }
-//            });
-//        });
-//    }
-//    
 }
 
 - (void) stopEventLoop {
     NSLog(@"stopEventLoop called!");
-    //
 }
 
 - (void) awakeFromNib {

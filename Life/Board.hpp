@@ -19,18 +19,17 @@ class Board {
         };
         
         Board(int height, int width);
+        Board(Board::Board &b); // Evolve board constructor
         ~Board();
-        
+    
         cell getElement(int i, int j);
         void setElement(int i, int j, cell c);
-        
-        // Randomize values with approximate density [0,1]
-        void randomize(double density);
-        
-        
-        static Board * boardEvolve(Board & board);
-        static Board * matrixAdd(Board & a, Board & b, int xSkew, int ySkew);
-        
+    
+        void randomize(double density); // Randomize values with approximate density [0,1]
+    
+        static void matrixAdd(Board &base, Board &add, int xSkew, int ySkew);
+        static cell makeCell(int state);
+    
     private:
         int width;
         int height;
