@@ -12,6 +12,8 @@
 #ifndef Block_h
 #define Block_h
 
+/* Model */
+
 @interface Block : UIView
 
 @property bool state;

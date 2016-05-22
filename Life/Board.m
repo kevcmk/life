@@ -15,6 +15,8 @@
 @synthesize width;
 @synthesize height;
 
+/* Model */
+
 - (instancetype) initWithHeight: (NSNumber *) h andWidth: (NSNumber *) w {
     
     self = [super init];
