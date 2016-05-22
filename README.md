@@ -1,3 +1,5 @@
-This iOS App demonstrates an Objective-C++ implementation of Conway's Game of Life... without memory leaks!
+This iOS App, an implementation of Conway's Game of Life, is an experiment with Classed-C++ interoperating with Objective-C. 
+
+Drag gesture enables cells.  
 
 ![alt tag](http://imgur.com/atQSN0C.png)

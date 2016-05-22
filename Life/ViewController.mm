@@ -180,7 +180,15 @@
 - (void) viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     
-    [self stopEventLoop];
+    // This will trigger cleanup
+    self.halt = YES;
+    
+    
+}
+
+- (void) cleanUp {
+    delete self.board;
+    self.board = nil;
     
 }
 
@@ -198,15 +206,13 @@
                 [self render:self.board];
                 if (!self.halt) {
                     [self update];
+                } else {
+                    [self cleanUp];
                 }
             });
         });
     }
     
-}
-
-- (void) stopEventLoop {
-    NSLog(@"stopEventLoop called!");
 }
 
 - (void) awakeFromNib {
