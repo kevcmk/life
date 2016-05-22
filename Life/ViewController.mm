@@ -6,13 +6,12 @@
 //  Copyright © 2016 Kevin Katz. All rights reserved.
 //
 
-#import "Board.h"
-#import "UIBoard.h"
 #import "ViewController.h"
+#import "Board.hpp"
 
 @interface ViewController ()
 
-@property (strong, nonatomic) Board *board;
+@property Board::Board *board;
 
 @property (nonatomic) float h_views;
 @property (nonatomic) float w_views;
@@ -62,9 +61,6 @@
         return a;
         
     };
-    
-    [super viewDidLayoutSubviews];
-    
     self.edge = gcd(self.view.frame.size.width, self.view.frame.size.height);
     NSLog(@"GCD of %f and %f is %f", self.view.frame.size.width, self.view.frame.size.height, self.edge, nil);
 //    if (self.edge < 8) {
@@ -104,43 +100,60 @@
         
     }
     
+    /* https://www.sitepoint.com/using-c-and-c-in-an-ios-app-with-objective-c/ */
+    
+    self.board = new Board::Board((int) self.h_views, (int) self.w_views);
+    
+
+    self.board->randomize(0.3);
+    for (int i = 0; i < (int) self.h_views; i++) {
+        for (int j = 0; j < (int) self.w_views; j++) {
+            NSLog(@"%@", self.board->getElement(i,j).state ? @"Yes" : @"No");
+        }
+    }
+    
+    
 }
 
 - (void) render: (Board *) board {
-    // Set view colors according to board board (w,h) == Board (w_views, h_views)
-    
-    UIColor * yesColor = [UIColor blackColor];
-    UIColor * noColor = [UIColor whiteColor];
-    
-    /* Initialize and store views */
-    for (int i = 0; i < (int) self.h_views; i++) {
-        // Top to Bottom
-        
-        for (int j = 0; j < (int) self.w_views; j++) {
-    
-            UIView * view = [self.view viewWithTag: (i * self.w_views + j)];
-            if ([[self.board getRow: [NSNumber numberWithInt:i] andColumn:[NSNumber numberWithInt:j]] intValue] == 1) {
-                [view setBackgroundColor:yesColor];
-            } else {
-                [view setBackgroundColor:noColor];
-            }
-        }
-        
-    }
-
+//    
+//    // Set view colors according to board board (w,h) == Board (w_views, h_views)
+//    
+//    UIColor * yesColor = [UIColor blackColor];
+//    UIColor * noColor = [UIColor whiteColor];
+//    
+//    /* Initialize and store views */
+//    for (int i = 0; i < (int) self.h_views; i++) {
+//        // Top to Bottom
+//        
+//        for (int j = 0; j < (int) self.w_views; j++) {
+//    
+//            UIView * view = [self.view viewWithTag: (i * self.w_views + j)];
+//            if ([[self.board getRow: [NSNumber numberWithInt:i] andColumn:[NSNumber numberWithInt:j]] intValue] == 1) {
+//                [view setBackgroundColor:yesColor];
+//            } else {
+//                [view setBackgroundColor:noColor];
+//            }
+//        }
+//        
+//    }
+//
 }
 
 - (void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
     [self initializeBoard];
-
-    self.board = [[Board alloc] initWithHeight: [NSNumber numberWithInt:(int) self.h_views] andWidth:[NSNumber numberWithInt: (int) self.w_views]];
-    [self.board randomize:@0.3];
-    [self render: self.board];
     
-    self.halt = NO;
-    [self update];
+    
+
+//
+//    self.board = [[Board alloc] initWithHeight: [NSNumber numberWithInt:(int) self.h_views] andWidth:[NSNumber numberWithInt: (int) self.w_views]];
+//    [self.board randomize:@0.3];
+//    [self render: self.board];
+//    
+//    self.halt = NO;
+//    [self update];
 
     
     
@@ -171,26 +184,26 @@
     NSLog(@"startEventLoop called!");
     
     
-    
-    /* Execute board updates on global queue */
-    self.queue = dispatch_queue_create("boardQueue", NULL);
-    
-    if (self.queue) {
-        dispatch_async(self.queue, ^{
-            NSLog(@"Async fxn called, evolving board...");
-            self.board = [Board boardEvolveWithBoard: self.board];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                NSLog(@"Main loop fxn called, rendering.");
-                [self render:self.board];
-                if (!self.halt) {
-                    NSLog(@"Self.halt false, calling update\n");
-                    [self update];
-                }
-            });
-        });
-    }
-    
+//    
+//    /* Execute board updates on global queue */
+//    self.queue = dispatch_queue_create("boardQueue", NULL);
+//    
+//    if (self.queue) {
+//        dispatch_async(self.queue, ^{
+//            NSLog(@"Async fxn called, evolving board...");
+//            self.board = [Board boardEvolveWithBoard: self.board];
+//            
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                NSLog(@"Main loop fxn called, rendering.");
+//                [self render:self.board];
+//                if (!self.halt) {
+//                    NSLog(@"Self.halt false, calling update\n");
+//                    [self update];
+//                }
+//            });
+//        });
+//    }
+//    
 }
 
 - (void) stopEventLoop {
@@ -200,25 +213,6 @@
 
 - (void) awakeFromNib {
     [super awakeFromNib];
-    // NSLog(@"awakeFromNib: %@", board.frame.size);
-    
-    /*
-    int x = board.frame.size.width;
-    int y = board.frame.size.height;
-
-    int x_count = x / 32;
-    int y_count = y / 32;
-    
-    NSMutableArray * views = [[NSMutableArray alloc] initWithCapacity:y_count];
-    for (int i = 0; i < y_count; i++) {
-        NSMutableArray * row = [[NSMutableArray alloc] initWithCapacity:x_count];
-        for (int j = 0; j < x_count; j++) {
-            [row insertObject:subView atIndex:j];
-        }
-        [views insertObject:row atIndex:i];
-    }
-     */
-
 }
 
 - (void)didReceiveMemoryWarning {

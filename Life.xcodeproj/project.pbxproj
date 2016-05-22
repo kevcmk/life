@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		9F9F32D91CE78C0900C90504 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9F32D81CE78C0900C90504 /* main.m */; };
 		9F9F32DC1CE78C0900C90504 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9F32DB1CE78C0900C90504 /* AppDelegate.m */; };
-		9F9F32DF1CE78C0900C90504 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9F32DE1CE78C0900C90504 /* ViewController.m */; };
+		9F9F32DF1CE78C0900C90504 /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F9F32DE1CE78C0900C90504 /* ViewController.mm */; };
 		9F9F32E21CE78C0900C90504 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9F9F32E01CE78C0900C90504 /* Main.storyboard */; };
 		9F9F32E41CE78C0900C90504 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9F9F32E31CE78C0900C90504 /* Assets.xcassets */; };
 		9F9F32E71CE78C0900C90504 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9F9F32E51CE78C0900C90504 /* LaunchScreen.storyboard */; };
@@ -17,6 +17,7 @@
 		9F9F32FD1CE78C0900C90504 /* LifeUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9F32FC1CE78C0900C90504 /* LifeUITests.m */; };
 		9F9F330B1CE78F3000C90504 /* Block.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9F330A1CE78F3000C90504 /* Block.m */; };
 		9F9F33101CE812D600C90504 /* Board.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9F330F1CE812D600C90504 /* Board.m */; };
+		9FB84AC01CF19462000624B6 /* Board.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FB84ABE1CF19462000624B6 /* Board.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,7 +43,7 @@
 		9F9F32DA1CE78C0900C90504 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		9F9F32DB1CE78C0900C90504 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		9F9F32DD1CE78C0900C90504 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		9F9F32DE1CE78C0900C90504 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		9F9F32DE1CE78C0900C90504 /* ViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewController.mm; sourceTree = "<group>"; };
 		9F9F32E11CE78C0900C90504 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		9F9F32E31CE78C0900C90504 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9F9F32E61CE78C0900C90504 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -57,6 +58,8 @@
 		9F9F330E1CE78FA200C90504 /* Block.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Block.h; sourceTree = "<group>"; };
 		9F9F330F1CE812D600C90504 /* Board.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Board.m; sourceTree = "<group>"; };
 		9F9F33111CE8132000C90504 /* Board.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Board.h; sourceTree = "<group>"; };
+		9FB84ABE1CF19462000624B6 /* Board.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Board.cpp; sourceTree = "<group>"; };
+		9FB84ABF1CF19462000624B6 /* Board.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Board.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,11 +110,13 @@
 		9F9F32D61CE78C0900C90504 /* Life */ = {
 			isa = PBXGroup;
 			children = (
+				9FB84ABE1CF19462000624B6 /* Board.cpp */,
+				9FB84ABF1CF19462000624B6 /* Board.hpp */,
 				9F9F32DA1CE78C0900C90504 /* AppDelegate.h */,
 				9F9F32DB1CE78C0900C90504 /* AppDelegate.m */,
 				9F9F32DD1CE78C0900C90504 /* ViewController.h */,
 				9F9F330A1CE78F3000C90504 /* Block.m */,
-				9F9F32DE1CE78C0900C90504 /* ViewController.m */,
+				9F9F32DE1CE78C0900C90504 /* ViewController.mm */,
 				9F9F330F1CE812D600C90504 /* Board.m */,
 				9F9F32E01CE78C0900C90504 /* Main.storyboard */,
 				9F9F32E31CE78C0900C90504 /* Assets.xcassets */,
@@ -280,7 +285,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9F9F32DF1CE78C0900C90504 /* ViewController.m in Sources */,
+				9FB84AC01CF19462000624B6 /* Board.cpp in Sources */,
+				9F9F32DF1CE78C0900C90504 /* ViewController.mm in Sources */,
 				9F9F330B1CE78F3000C90504 /* Block.m in Sources */,
 				9F9F32DC1CE78C0900C90504 /* AppDelegate.m in Sources */,
 				9F9F32D91CE78C0900C90504 /* main.m in Sources */,
