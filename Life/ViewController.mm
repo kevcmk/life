@@ -73,7 +73,7 @@
         /* GCD is too big, and it's even.  Cut it in half */
         self.edge = self.edge / 2.0;
     }
-    self.edge = 4.0;
+    self.edge = 8.0;
     
     float w = self.view.frame.size.width;
     float h = self.view.frame.size.height;
@@ -109,32 +109,6 @@
         
     self.board = new Board::Board(self.h_views, self.w_views);
     self.board->randomize(0.3);
-        
-    
-//
-//    Board::Board * board1 = new Board::Board(4,4);
-//    Board::Board * board2 = new Board::Board(4,4);
-//    board1->setElement(1,1,Board::makeCell(1));
-//    board1->setElement(1,3,Board::makeCell(1));
-//    board2->setElement(1,1,Board::makeCell(1));
-//    board2->setElement(1,3,Board::makeCell(1));
-//    
-//    Board::matrixAdd(*board1, *board2, 1, 0);
-//    
-//    for (int i = 0; i < 4; i++) {
-//        NSLog(@"%d %d %d %d", board1->getElement(i, 0).state, board1->getElement(i, 1).state, board1->getElement(i, 2).state, board1->getElement(i, 3).state, nil);
-//    }
-//    
-//    
-//    self.board = new Board::Board((int) self.h_views, (int) self.w_views);
-
-//    self.board->randomize(0.3);
-//    for (int i = 0; i < (int) self.h_views; i++) {
-//        for (int j = 0; j < (int) self.w_views; j++) {
-//            NSLog(@"%d", self.board->getElement(i,j).state);
-//        }
-//    }
-    
     
 }
 
@@ -148,9 +122,15 @@
         for (int j = 0; j < (int) self.w_views; j++) {
             UIView * view = [self.boardCells objectAtIndex: (NSInteger) (i * (int) self.w_views + j)];
             if (self.board->getElement(i, j).state) {
-                [view setBackgroundColor:yesColor];
+                // [view setBackgroundColor:yesColor];
+                [UIView animateWithDuration:0.2 animations:^{
+                    view.backgroundColor = yesColor;
+                } completion:NULL];
             } else {
-                [view setBackgroundColor:noColor];
+                //[view setBackgroundColor:noColor];
+                [UIView animateWithDuration:0.2 animations:^{
+                    view.backgroundColor = noColor;
+                } completion:NULL];
             }
         }
     }
@@ -166,22 +146,6 @@
     self.halt = NO;
     [self update];
 
-    
-    
-    /*
-    for (int i = 0; i < (int) self.h_views; i++) {
-       
-        for (int j = 0; j < (int) self.w_views; j++) {
-            UIView * view = [self.view viewWithTag: (i * self.w_views + j)];
-
-                UIColor * color = [UIColor colorWithRed:1.0 green:0.0 blue: 0.0 alpha:1.0];
-                [view setBackgroundColor: color];
-            }
-        }
-       
-    }
-    */
-
 }
 
 - (void) viewWillDisappear:(BOOL)animated {
@@ -192,22 +156,18 @@
 }
 
 - (void) update {
-    NSLog(@"Update called.");
     /* Execute board updates on global queue */
     self.queue = dispatch_queue_create("boardQueue", NULL);
     
     if (self.queue) {
         dispatch_async(self.queue, ^{
-            NSLog(@"[Async] Evolve called...");
             Board::Board * oldBoard = self.board;
             self.board = new Board::Board(*self.board);
             delete oldBoard;
             
             dispatch_async(dispatch_get_main_queue(), ^{
-                NSLog(@"[Async] Main loop fxn called, rendering.");
                 [self render:self.board];
                 if (!self.halt) {
-                    NSLog(@"Self.halt false, calling update\n");
                     [self update];
                 }
             });
