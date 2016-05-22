@@ -19,7 +19,7 @@
 
 
 // Take a board and return an update according to Conway's game of life.
-+ (instancetype) golStep: (Board *) currentState;
++ (instancetype) boardEvolveWithBoard: (Board *) currentState;
 
 + (instancetype) matrixAdd: (Board *) a With: (Board *) b AndXSkew: (NSNumber *) xSkew AndYSkew: (NSNumber *) ySkew;
 

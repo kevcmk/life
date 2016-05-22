@@ -50,7 +50,7 @@
 }
 
 
-+ (instancetype) golStep: (Board *) currentState {
++ (instancetype) boardEvolveWithBoard: (Board *) currentState {
     
     Board * board = [[Board alloc] initWithHeight:currentState.height andWidth:currentState.width];
     Board * sums = [[Board alloc] initWithHeight:currentState.height andWidth:currentState.width];
