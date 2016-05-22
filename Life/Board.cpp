@@ -34,11 +34,13 @@ void Board::randomize(double density) {
     std::vector<cell>::iterator it;
     for(it=board.begin(); it < board.end(); it++) {
         Board:cell c;
-        if (rand() / RAND_MAX < density) {
+        float r = rand() / (float) RAND_MAX;
+        if (r < density) {
             c = { true };
         } else {
             c = { false };
         }
+        
         *it = c;
     }
 }
