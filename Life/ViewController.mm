@@ -12,6 +12,7 @@
 @interface ViewController ()
 
 @property Board::Board *board;
+@property NSMutableArray * boardCells;
 
 @property (nonatomic) float h_views;
 @property (nonatomic) float w_views;
@@ -27,6 +28,8 @@
 @implementation ViewController
 
 @synthesize board;
+@synthesize boardCells;
+
 @synthesize h_views;
 @synthesize w_views;
 @synthesize h_margin;
@@ -70,7 +73,7 @@
         /* GCD is too big, and it's even.  Cut it in half */
         self.edge = self.edge / 2.0;
     }
-    self.edge = 10.0;
+    self.edge = 4.0;
     
     float w = self.view.frame.size.width;
     float h = self.view.frame.size.height;
@@ -80,6 +83,8 @@
     
     self.w_margin = (float) ((int) w % (int) self.edge) / 2;
     self.h_margin = (float) ((int) h % (int) self.edge) / 2;
+    
+    self.boardCells = [NSMutableArray arrayWithCapacity: (NSUInteger) ((int) self.w_views * (int) self.h_views)];
     
     /* Initialize and store views */
     for (int i = 0; i < (int) self.h_views; i++) {
@@ -92,10 +97,11 @@
             CGRect rect = CGRectMake(self.w_margin + j * self.edge, self.h_margin + i * self.edge, self.edge, self.edge);
             UIView * view = [[UIView alloc] initWithFrame:rect];
             
-            NSInteger viewTag = (NSInteger) (i * self.w_views + j);
-            view.tag = viewTag;
+            //NSInteger viewTag = (NSInteger) (i * self.w_views + j);
+            //view.tag = viewTag;
             
             [self.view addSubview:view];
+            [self.boardCells insertObject:view atIndex: (NSUInteger) (i * (int) self.w_views + j)];
             
         }
         
@@ -133,26 +139,20 @@
 }
 
 - (void) render: (Board *) board {
-    
     // Set view colors according to board board (w,h) == Board (w_views, h_views)
     
     UIColor * yesColor = [UIColor blackColor];
     UIColor * noColor = [UIColor whiteColor];
-    
-    /* Initialize and store views */
+
     for (int i = 0; i < (int) self.h_views; i++) {
-        // Top to Bottom
-        
         for (int j = 0; j < (int) self.w_views; j++) {
-    
-            UIView * view = [self.view viewWithTag: (i * self.w_views + j)];
+            UIView * view = [self.boardCells objectAtIndex: (NSInteger) (i * (int) self.w_views + j)];
             if (self.board->getElement(i, j).state) {
                 [view setBackgroundColor:yesColor];
             } else {
                 [view setBackgroundColor:noColor];
             }
         }
-        
     }
 
 }
@@ -163,7 +163,6 @@
     [self initializeBoard];
     [self render: self.board];
     
-
     self.halt = NO;
     [self update];
 
