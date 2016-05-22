@@ -9,6 +9,10 @@
 #import "ViewController.h"
 #import "Board.hpp"
 
+/* http://stackoverflow.com/a/5172449 */
+#define ARC4RANDOM_MAX      0x100000000
+
+
 @interface ViewController ()
 
 @property Board::Board *board;
@@ -44,11 +48,35 @@
     return YES;
 }
 
-//+ (int) gcd:(int)a and:(int)b {
-    //}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
+    UIPanGestureRecognizer *panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(moveViewWithGestureRecognizer:)];
+    [self.view addGestureRecognizer:panGestureRecognizer];
+}
+
+-(void)moveViewWithGestureRecognizer:(UIPanGestureRecognizer *)panGestureRecognizer {
+    /* Thanks to this article: http://www.appcoda.com/ios-gesture-recognizers/ */
+    CGPoint touchLocation = [panGestureRecognizer locationInView:self.view];
+    
+    /* hitTest is slower than arithmetic in determining touched cell */
+    int cell_i = (int) ((touchLocation.y - self.h_margin) / self.edge);
+    int cell_j = (int) ((touchLocation.x - self.w_margin) / self.edge);
+    
+    //  ***
+    // *****
+    // *****
+    // *****
+    //  ***
+    for (int dy = -2; dy <= 2; dy++) {
+        for (int dx = -2; dx <= 2; dx++) {
+            int x = cell_j + dx;
+            int y = cell_i + dy;
+            if (0 <= y && y < self.h_views && 0 <= x && x < self.w_views) {
+                self.board->setElement(y, x, Board::makeCell(1));
+            }
+        }
+    }
+    
 }
 
 - (void) initializeBoard {
@@ -108,23 +136,24 @@
     }
         
     self.board = new Board::Board(self.h_views, self.w_views);
-    self.board->randomize(0.3);
+    self.board->randomize(0.1);
     
 }
 
 - (void) render: (Board *) board {
     // Set view colors according to board board (w,h) == Board (w_views, h_views)
     
-    UIColor * yesColor = [UIColor blackColor];
-    UIColor * noColor = [UIColor whiteColor];
+    UIColor * noColor = [UIColor blackColor];
 
     for (int i = 0; i < (int) self.h_views; i++) {
         for (int j = 0; j < (int) self.w_views; j++) {
             UIView * view = [self.boardCells objectAtIndex: (NSInteger) (i * (int) self.w_views + j)];
             if (self.board->getElement(i, j).state) {
                 // [view setBackgroundColor:yesColor];
+                double r = ((double)arc4random() / ARC4RANDOM_MAX);
+
                 [UIView animateWithDuration:0.2 animations:^{
-                    view.backgroundColor = yesColor;
+                    view.backgroundColor = [UIColor colorWithHue: r saturation:1.0 brightness:1.0 alpha: 1.0];
                 } completion:NULL];
             } else {
                 //[view setBackgroundColor:noColor];
