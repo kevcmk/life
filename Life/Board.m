@@ -9,6 +9,9 @@
 #import "Board.h"
 #import <Foundation/Foundation.h>
 
+/* Thanks for random fxn to: http://stackoverflow.com/a/5172449 */
+#define ARC4RANDOM_MAX      0x100000000
+
 @implementation Board
 
 @synthesize elts;
@@ -133,6 +136,26 @@
     
 }
 
+
+
+- (void) randomize: (NSNumber *) density {
+    if ([density doubleValue] <= 0.0 || [density floatValue] > 1.0) {
+        density = @0.3;
+    }
+    double density_f = [density floatValue];
+    for (int i = 0; i < [self.height intValue]; i++) {
+        for (int j = 0; j < [self.width intValue]; j++) {
+
+            double r = ((double)arc4random() / ARC4RANDOM_MAX);
+            
+            if (r <= density_f) {
+                [self setRow:[NSNumber numberWithInt: i] andColumn: [NSNumber numberWithInt: j] toValue:@1];
+            } else {
+                [self setRow:[NSNumber numberWithInt: i] andColumn: [NSNumber numberWithInt: j] toValue:@0];
+            }
+        }
+    }
+}
 
 
 - (NSString *) description {

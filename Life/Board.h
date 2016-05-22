@@ -31,6 +31,9 @@
 - (void) setRow: (NSNumber *) row andColumn: (NSNumber *) column toValue: (NSNumber *) value;
 - (NSNumber *) getRow: (NSNumber *) row andColumn: (NSNumber *) column;
 
+// Randomize values with approximate density [0,1]
+- (void) randomize: (NSNumber *) density;
+
 
 
 @end

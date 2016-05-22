@@ -12,97 +12,151 @@
 
 @interface ViewController ()
 
-@property (weak, nonatomic) IBOutlet UIBoard *board;
-@property (strong, nonatomic) NSMutableArray *boardStore;
-
+@property (strong, nonatomic) Board *board;
+@property (nonatomic) float h_views;
+@property (nonatomic) float w_views;
+@property (nonatomic) float h_margin;
+@property (nonatomic) float w_margin;
+@property (nonatomic) float edge;
 
 @end
 
 @implementation ViewController
 
-@synthesize boardStore;
+@synthesize board;
+@synthesize h_views;
+@synthesize w_views;
+@synthesize h_margin;
+@synthesize w_margin;
+@synthesize edge;
+
+-(BOOL)prefersStatusBarHidden{
+    return YES;
+}
+
+//+ (int) gcd:(int)a and:(int)b {
+    //}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    // Do any additional setup after loading the view, typically from a nib.
-    
-    
-    /*
-    NSLog(@"%@\n", [b description]);
-    for (int i = 0; i < 8; i++) {
-        b = [Board golStep:b];
-        NSLog(@"%@\n", [b description]);
-    }
-     */
-    
-    //NSLog([[Board matrixAdd:x With:x AndXSkew:@0 AndYSkew:@0] description]);
-    //NSLog([[Board matrixAdd:x With:x AndXSkew:@0 AndYSkew:@1] description]);
-    
 }
 
-- (void) viewWillAppear:(BOOL)animated {
+- (void) initializeBoard {
+    int (^gcd) (int, int) = ^(int a, int b) {
+        // Euclid's method for GCD O(n)
+        int t;
+        
+        while (b != 0) {
+            t = b;
+            b = a % b;
+            a = t;
+        }
+        return a;
+        
+    };
     
     [super viewDidLayoutSubviews];
-    NSLog(@"w: %f", self.view.frame.size.width);
-    NSLog(@"h: %f", self.view.frame.size.height);
     
-    float edge = 32.0;
+    self.edge = gcd(self.view.frame.size.width, self.view.frame.size.height);
+    
+    if (self.edge < 8) {
+        /* If GCD is too small, increase it and fall back to margins */
+        self.edge = 8.0;
+    } else if (self.edge >= 40 && (int) self.edge % 2 == 0) {
+        self.edge = self.edge / 2.0;
+    }
+    
     float w = self.view.frame.size.width;
     float h = self.view.frame.size.height;
     
-    float w_views = w / edge;
-    float h_views = h / edge;
+    self.w_views = w / self.edge;
+    self.h_views = h / self.edge;
     
-    NSLog(@"w_views: %f", w_views);
-    NSLog(@"h_views: %f", h_views);
+    self.w_margin = (float) ((int) w % (int) self.edge) / 2;
+    self.h_margin = (float) ((int) h % (int) self.edge) / 2;
     
-    float w_margin = (float) ((int) w % (int) edge) / 2;
-    float h_margin = (float) ((int) h % (int) edge) / 2;
-    
-    NSLog(@"w_margin: %f", w_margin);
-    NSLog(@"h_margin: %f", h_margin);
-    
-    /* Create 2 dimensional array to store block views */
-    boardStore = [[NSMutableArray alloc] initWithCapacity:(int) h_views];
-    for (int i = 0; i < (int) h_views; i++) {
-        NSMutableArray * row = [[NSMutableArray alloc] initWithCapacity:(int) w_views];
-        for (int j = 0; j < (int) w_views; j++) {
-            [row insertObject:@0 atIndex:j];
-        }
-        [boardStore insertObject:row atIndex:i];
-    }
-    
-    //[self.view setBackgroundColor:[UIColor colorWithRed:1.0 green:0.0 blue:0.0 alpha:1.0]];
-
     /* Initialize and store views */
-    for (int i = 0; i < (int) h_views; i++) {
+    for (int i = 0; i < (int) self.h_views; i++) {
         // Top to Bottom
-        for (int j = 0; j < (int) w_views; j++) {
+        
+        for (int j = 0; j < (int) self.w_views; j++) {
             // Left to Right
-            CGRect rect = CGRectMake(w_margin + j * edge, h_margin + i * edge, edge, edge);
+            
+            // Set view frame
+            CGRect rect = CGRectMake(self.w_margin + j * self.edge, self.h_margin + i * self.edge, self.edge, self.edge);
             UIView * view = [[UIView alloc] initWithFrame:rect];
-            // NSLog(@"Initializing view with frame: %f %f %f %f", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, nil);
             
-            UIColor * color = [UIColor colorWithRed:(i / h_views) green:(j / w_views) blue:0.0 alpha:1.0];
-            [view setBackgroundColor:color];
+            NSInteger viewTag = (NSInteger) (i * self.w_views + j);
+            view.tag = viewTag;
             
-            NSMutableArray * row = [boardStore objectAtIndex:(NSUInteger) i];
-            [row insertObject:view atIndex:(NSUInteger) j];
-            
-            NSInteger viewIndex = (NSInteger) (i * w_views + j);
-            [self.view addSubview:view]; // atIndex:viewIndex];
-            // NSLog(@"Inserting view at index %ld", viewIndex);
+            [self.view addSubview:view];
             
         }
+        
     }
     
-    /*dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0); */
+}
+
+- (void) render: (Board *) board {
+    // Set view colors according to board board (w,h) == Board (w_views, h_views)
     
-    /*dispatch_apply(500, queue, ^(size_t i) {
-        NSLog(@"%d\n",i);
-    }); */
+    // UIColor * color = [UIColor colorWithRed:(i / self.h_views) green:(j / self.w_views) blue:0.0 alpha:1.0];
+    UIColor * yesColor = [UIColor blackColor];
+    UIColor * noColor = [UIColor whiteColor];
     
+    /* Initialize and store views */
+    for (int i = 0; i < (int) self.h_views; i++) {
+        // Top to Bottom
+        
+        for (int j = 0; j < (int) self.w_views; j++) {
+    
+            UIView * view = [self.view viewWithTag: (i * self.w_views + j)];
+            if ([[self.board getRow: [NSNumber numberWithInt:i] andColumn:[NSNumber numberWithInt:j]] intValue] == 1) {
+                [view setBackgroundColor:yesColor];
+            } else {
+                [view setBackgroundColor:noColor];
+            }
+        }
+        
+    }
+
+}
+
+- (void) viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    [self initializeBoard];
+
+    self.board = [[Board alloc] initWithHeight: [NSNumber numberWithInt:(int) self.h_views] andWidth:[NSNumber numberWithInt: (int) self.w_views]];
+    [self.board randomize:@0.3];
+    [self render: self.board];
+
+    /* Execute board updates on global queue */
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
+    dispatch_source_set_timer(timer, DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC, 0.1 * NSEC_PER_SEC);
+    dispatch_source_set_event_handler(timer, ^{
+        NSLog(@"Queue!");
+    });
+    dispatch_resume(timer);
+    
+    /*
+    for (int i = 0; i < (int) self.h_views; i++) {
+       
+        for (int j = 0; j < (int) self.w_views; j++) {
+            UIView * view = [self.view viewWithTag: (i * self.w_views + j)];
+
+                UIColor * color = [UIColor colorWithRed:1.0 green:0.0 blue: 0.0 alpha:1.0];
+                [view setBackgroundColor: color];
+            }
+        }
+       
+    }
+    */
+
+
+    
+
     
     /*
     CGSize windowFrameSize = [[UIApplication sharedApplication] keyWindow].frame.size;
@@ -126,6 +180,10 @@
     [b setRow:@5 andColumn:@5 toValue:@1];
     */
 
+}
+
+- (void) viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
 }
 
 - (void) awakeFromNib {
