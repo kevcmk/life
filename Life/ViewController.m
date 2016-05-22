@@ -19,7 +19,9 @@
 @property (nonatomic) float h_margin;
 @property (nonatomic) float w_margin;
 @property (nonatomic) float edge;
-@property dispatch_source_t lifeTimer;
+
+@property (atomic) Boolean halt;
+@property dispatch_queue_t queue;
 
 @end
 
@@ -31,7 +33,10 @@
 @synthesize h_margin;
 @synthesize w_margin;
 @synthesize edge;
-@synthesize lifeTimer;
+
+@synthesize halt;
+@synthesize queue;
+
 
 -(BOOL)prefersStatusBarHidden{
     return YES;
@@ -62,12 +67,13 @@
     
     self.edge = gcd(self.view.frame.size.width, self.view.frame.size.height);
     NSLog(@"GCD of %f and %f is %f", self.view.frame.size.width, self.view.frame.size.height, self.edge, nil);
-    if (self.edge < 8) {
-        /* If GCD is too small, increase it and fall back to margins */
-        self.edge = 8.0;
-    } else if (self.edge >= 40 && (int) self.edge % 2 == 0) {
-        self.edge = self.edge / 4.0;
-    }
+//    if (self.edge < 8) {
+//        /* If GCD is too small, increase it and fall back to margins */
+//        self.edge = 8.0;
+//    } else if (self.edge >= 40 && (int) self.edge % 2 == 0) {
+//        self.edge = self.edge / 2.0;
+//    }
+    self.edge = 16.0;
     
     float w = self.view.frame.size.width;
     float h = self.view.frame.size.height;
@@ -133,7 +139,8 @@
     [self.board randomize:@0.3];
     [self render: self.board];
     
-    [self startEventLoop:1.0];
+    self.halt = NO;
+    [self update];
 
     
     
@@ -160,42 +167,35 @@
     
 }
 
-- (void) startEventLoop: (double) rate {
+- (void) update {
     NSLog(@"startEventLoop called!");
     
-    if (self.lifeTimer) {
-        NSLog(@"Error: loop already exists.");
-        return;
-    }
     
-    double seconds = 1 / rate;
     
     /* Execute board updates on global queue */
-    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    self.lifeTimer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
-    dispatch_source_set_timer(self.lifeTimer, DISPATCH_TIME_NOW, seconds * NSEC_PER_SEC, 0.1 * NSEC_PER_SEC);
-    dispatch_source_set_event_handler(self.lifeTimer, ^{
-
-        self.board = [Board boardEvolveWithBoard: self.board];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self render:self.board];
-        });
-        
+    self.queue = dispatch_queue_create("boardQueue", NULL);
     
-    });
-    NSLog(@"Beginning timer!");
-    dispatch_resume(self.lifeTimer);
+    if (self.queue) {
+        dispatch_async(self.queue, ^{
+            NSLog(@"Async fxn called, evolving board...");
+            self.board = [Board boardEvolveWithBoard: self.board];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                NSLog(@"Main loop fxn called, rendering.");
+                [self render:self.board];
+                if (!self.halt) {
+                    NSLog(@"Self.halt false, calling update\n");
+                    [self update];
+                }
+            });
+        });
+    }
     
 }
 
 - (void) stopEventLoop {
     NSLog(@"stopEventLoop called!");
-    /* Stop timer */
-    if (self.lifeTimer) {
-        NSLog(@"Halting timer!");
-        dispatch_source_cancel(self.lifeTimer);
-        self.lifeTimer = nil;
-    }
+    //
 }
 
 - (void) awakeFromNib {
