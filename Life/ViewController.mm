@@ -102,15 +102,31 @@
     
     /* https://www.sitepoint.com/using-c-and-c-in-an-ios-app-with-objective-c/ */
     
-    self.board = new Board::Board((int) self.h_views, (int) self.w_views);
     
-
-    self.board->randomize(0.3);
-    for (int i = 0; i < (int) self.h_views; i++) {
-        for (int j = 0; j < (int) self.w_views; j++) {
-            NSLog(@"%@", self.board->getElement(i,j).state ? @"Yes" : @"No");
-        }
+    Board::Board * board1 = new Board::Board(4,4);
+    Board::cell c = { 1 };
+    board1->setElement(1,1,c);
+    board1->setElement(1,3,c);
+    
+    Board::Board * board2 = Board::matrixAdd(*board1, *board1, 1, 1);
+    
+    for (int i = 0; i < 4; i++) {
+        
+        NSLog(@"%d %d %d %d", board2->getElement(i, 0).state, board2->getElement(i, 1).state, board2->getElement(i, 2).state, board2->getElement(i, 3).state, nil);
+        
     }
+    
+    
+    
+    
+    self.board = new Board::Board((int) self.h_views, (int) self.w_views);
+
+//    self.board->randomize(0.3);
+//    for (int i = 0; i < (int) self.h_views; i++) {
+//        for (int j = 0; j < (int) self.w_views; j++) {
+//            NSLog(@"%d", self.board->getElement(i,j).state);
+//        }
+//    }
     
     
 }

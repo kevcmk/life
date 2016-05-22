@@ -46,24 +46,37 @@ void Board::randomize(double density) {
 }
 
 
+Board * Board::matrixAdd(Board &a, Board &b, int xSkew, int ySkew) {
     
-    /*if ([density doubleValue] <= 0.0 || [density floatValue] > 1.0) {
-        density = @0.3;
-    }
-    double density_f = [density floatValue];
-    for (int i = 0; i < [self.height intValue]; i++) {
-        for (int j = 0; j < [self.width intValue]; j++) {
-            
-            double r = ((double)arc4random() / ARC4RANDOM_MAX);
-            
-            if (r <= density_f) {
-                [self setRow:[NSNumber numberWithInt: i] andColumn: [NSNumber numberWithInt: j] toValue:@1];
+    // TODO Ensure release!
+    Board::Board * result = new Board(a.width, a.height);
+    int y_count = a.height;
+    int x_count = a.width;
+    for (int i = 0; i < y_count; i++) {
+        for (int j = 0; j < x_count; j++) {
+            int other_i = i + ySkew;
+            int other_j = j + xSkew;
+            if (other_i < 0 || other_i >= y_count || other_j < 0 || other_j >= x_count) {
+                int a_val = a.getElement(i, j).state;
+                Board::cell c = { a_val };
+                result->setElement(i, j, c);
             } else {
-                [self setRow:[NSNumber numberWithInt: i] andColumn: [NSNumber numberWithInt: j] toValue:@0];
+                int a_val = a.getElement(i, j).state;
+                int b_val = b.getElement(other_i, other_j).state;
+                int sum = a_val + b_val;
+                Board::cell c = { sum };
+                result->setElement(i, j, c);
             }
         }
     }
-}*/
+    return result;
+    
+}
+
+
+
+
+
 
 /*
     // Randomize values with approximate density [0,1]

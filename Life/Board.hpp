@@ -15,7 +15,7 @@
 class Board {
     public:
         struct cell {
-            bool state;
+            int state;
         };
         
         Board(int height, int width);
