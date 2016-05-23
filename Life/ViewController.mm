@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "Board.hpp"
+#import <tgmath.h>
 
 /* http://stackoverflow.com/a/5172449 */
 #define ARC4RANDOM_MAX      0x100000000
@@ -80,28 +81,28 @@
 }
 
 - (void) initializeBoard {
-    int (^gcd) (int, int) = ^(int a, int b) {
-        // Euclid's method for GCD O(n)
-        int t;
-        
-        while (b != 0) {
-            t = b;
-            b = a % b;
-            a = t;
-        }
-        return a;
-        
-    };
-    self.edge = gcd(self.view.frame.size.width, self.view.frame.size.height);
-    NSLog(@"GCD of %f and %f is %f", self.view.frame.size.width, self.view.frame.size.height, self.edge, nil);
-    if (self.edge < 8) {
-        /* If GCD is too small, increase it and fall back to margins */
-        self.edge = 8.0;
-    } else if (self.edge >= 40 && (int) self.edge % 2 == 0) {
-        /* GCD is too big, and it's even.  Cut it in half */
-        self.edge = self.edge / 2.0;
-    }
-    self.edge = 8.0;
+//    int (^gcd) (int, int) = ^(int a, int b) {
+//        // Euclid's method for GCD O(n)
+//        int t;
+//        
+//        while (b != 0) {
+//            t = b;
+//            b = a % b;
+//            a = t;
+//        }
+//        return a;
+//        
+//    };
+//    self.edge = gcd(self.view.frame.size.width, self.view.frame.size.height);
+//    NSLog(@"GCD of %f and %f is %f", self.view.frame.size.width, self.view.frame.size.height, self.edge, nil);
+//    if (self.edge < 8) {
+//        /* If GCD is too small, increase it and fall back to margins */
+//        self.edge = 8.0;
+//    } else if (self.edge >= 40 && (int) self.edge % 2 == 0) {
+//        /* GCD is too big, and it's even.  Cut it in half */
+//        self.edge = self.edge / 2.0;
+//    }
+    self.edge = 12.0;
     
     float w = self.view.frame.size.width;
     float h = self.view.frame.size.height;
@@ -125,6 +126,9 @@
             CGRect rect = CGRectMake(self.w_margin + j * self.edge, self.h_margin + i * self.edge, self.edge, self.edge);
             UIView * view = [[UIView alloc] initWithFrame:rect];
             
+            double r = ((double)arc4random() / ARC4RANDOM_MAX);
+            view.backgroundColor = [UIColor colorWithHue:r saturation:1.0 brightness:1.0 alpha: 0.0];
+            
             //NSInteger viewTag = (NSInteger) (i * self.w_views + j);
             //view.tag = viewTag;
             
@@ -143,22 +147,31 @@
 - (void) render: (Board *) board {
     // Set view colors according to board board (w,h) == Board (w_views, h_views)
     
-    UIColor * noColor = [UIColor blackColor];
+    // UIColor * noColor = [UIColor blackColor];
 
     for (int i = 0; i < (int) self.h_views; i++) {
         for (int j = 0; j < (int) self.w_views; j++) {
+            
             UIView * view = [self.boardCells objectAtIndex: (NSInteger) (i * (int) self.w_views + j)];
+            
+            CGFloat hue;
+            CGFloat saturation;
+            CGFloat brightness;
+            CGFloat alpha;
+            [view.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+            
             if (self.board->getElement(i, j).state) {
-                // [view setBackgroundColor:yesColor];
-                double r = ((double)arc4random() / ARC4RANDOM_MAX);
+                // Advance color and set alpha to 1
 
                 [UIView animateWithDuration:0.2 animations:^{
-                    view.backgroundColor = [UIColor colorWithHue: r saturation:1.0 brightness:1.0 alpha: 1.0];
+                    CGFloat new_hue = fmod(hue + 0.007, 1.0);
+                    view.backgroundColor = [UIColor colorWithHue:new_hue saturation:saturation brightness:brightness alpha:1.0];
+                    
                 } completion:NULL];
             } else {
-                //[view setBackgroundColor:noColor];
+                // Hold color and set alpha to 0
                 [UIView animateWithDuration:0.2 animations:^{
-                    view.backgroundColor = noColor;
+                    view.backgroundColor = [UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.0];
                 } completion:NULL];
             }
         }
